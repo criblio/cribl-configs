@@ -1,0 +1,29 @@
+{
+  "id": "default",
+  "routes": [
+    {
+      "id": "rxEw4y",
+      "name": "Weblogs to S3",
+      "final": false,
+      "disabled": true,
+      "pipeline": "Weblogs Pipeline To S3",
+      "filter": "sourcetype=='access_combined'",
+      "description": "Send weblogs to S3",
+      "clones": [
+        {
+          "cloned": "yes"
+        }
+      ]
+    },
+    {
+      "id": "Zm7fh0",
+      "name": "Weblogs Sampled To Splunk",
+      "final": true,
+      "disabled": true,
+      "pipeline": "Weblogs Pipeline To Splunk",
+      "filter": "sourcetype=='access_combined'",
+      "description": "Send sampled weblogs to S3",
+      "clones": []
+    }
+  ]
+}

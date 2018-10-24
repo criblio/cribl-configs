@@ -1,0 +1,9 @@
+{
+  "id": "Weblogs Pipeline To S3",
+  "conf": {
+    "asyncFuncTimeout": 1000,
+    "output": "Web Access Logs To S3",
+    "description": "Send full fidelity weblog data to S3",
+    "functions": []
+  }
+}
