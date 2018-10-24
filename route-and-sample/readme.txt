@@ -1,5 +1,5 @@
 These configs support the blog post here: 
-<url>
+https://blog.cribl.io/2018/10/24/routing-full-fidelity-and-sampling-data-with-cribl/
 
 
 To apply confgurations please follow these steps
