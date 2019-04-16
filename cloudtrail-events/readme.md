@@ -1,5 +1,5 @@
-These configs support the blog post here: 
-http://blog.cribl.io/2019/04/15/using-cribl-to-help-threat-hunters-while-staying-compliant-in-real-time
+These configs support the blog post here:  
+http://blog.cribl.io/2019/04/16/threat-hunting-while-staying-compliant-categorizing-and-scoring-aws-cloudtrail-events-in-real-time
 
 To apply confgurations please follow these steps
 ------------------------------------------------
