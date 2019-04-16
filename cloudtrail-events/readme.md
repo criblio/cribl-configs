@@ -4,7 +4,7 @@ http://blog.cribl.io/2019/04/15/using-cribl-to-help-threat-hunters-while-staying
 To apply confgurations please follow these steps
 ------------------------------------------------
 
-* Have a running instance of Cribl in your environment
+* Have a running instance of Cribl in your environment.
 
 * Use the Cribl S3 Log Collector serverless app to collect CloudTrail data from your S3 bucket: 
     * Serverless App: https://serverlessrepo.aws.amazon.com/applications/arn:aws:serverlessrepo:us-east-1:496698360409:applications~Cribl-S3-Log-Collector
