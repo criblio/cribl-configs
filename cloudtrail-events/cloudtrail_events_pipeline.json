@@ -1,0 +1,132 @@
+{
+  "id": "cloudtrail_events",
+  "conf": {
+    "asyncFuncTimeout": 1000,
+    "output": "default",
+    "functions": [
+      {
+        "filter": "true",
+        "id": "serde",
+        "description": "Parse CloudTrail event as JSON and extract fields",
+        "disabled": false,
+        "conf": {
+          "mode": "extract",
+          "type": "json",
+          "srcField": "_raw",
+          "remove": [
+            "responseElements.credentials.sessionToken"
+          ]
+        }
+      },
+      {
+        "filter": "/(^Describe|^List|^Get)/.test(eventName)",
+        "id": "suppress",
+        "description": "Suppress read-only events",
+        "disabled": true,
+        "conf": {
+          "keyExpr": "`${eventName}`",
+          "allow": 1,
+          "suppressPeriodSec": 60,
+          "dropEventsMode": true,
+          "maxCacheSize": 50000,
+          "cacheIdleTimeoutPeriods": 2,
+          "numEventsIdleTimeoutTrigger": 10000
+        }
+      },
+      {
+        "conf": {},
+        "filter": "/(^Describe|^List|^Get)/.test(eventName)",
+        "id": "drop",
+        "description": "Filter out read-only events",
+        "disabled": false
+      },
+      {
+        "filter": "true",
+        "id": "lookup",
+        "description": "Lookup securityEventCategory for lookup file ",
+        "conf": {
+          "file": "cloudtrail_events.csv",
+          "reloadPeriodSec": 60,
+          "addToEvent": false,
+          "inFields": [
+            {
+              "eventField": "eventName",
+              "lookupField": "eventName"
+            }
+          ],
+          "outFields": [
+            {
+              "lookupField": "securityEventCategory",
+              "eventField": "securityEventCategory"
+            }
+          ]
+        },
+        "disabled": false
+      },
+      {
+        "filter": "true",
+        "id": "eval",
+        "description": "Other Cloudtrail CIS security checks",
+        "disabled": false,
+        "conf": {
+          "add": [
+            {
+              "name": "__mfaAuth",
+              "value": "userIdentity.sessionContext.attributes.mfaAuthenticated"
+            },
+            {
+              "name": "__errorCode",
+              "value": "errorCode || ''"
+            },
+            {
+              "name": "securityEventCategory",
+              "value": "__mfaAuth!=\"true\" ? 'NoMFAAPIActivity' : securityEventCategory"
+            },
+            {
+              "name": "securityEventCategory",
+              "value": "eventName=='ConsoleLogin' && (additionalEventData && additionalEventData.MFAUsed==\"No\") ? 'NoMFAConsoleSignInActivity' : securityEventCategory"
+            },
+            {
+              "name": "securityEventCategory",
+              "value": "eventName=='RunInstances' && /(?:\\d+)xlarge/.test(requestParameters.instanceType) ? 'EC2LargeInstanceActivity' : securityEventCategory"
+            },
+            {
+              "name": "securityEventCategory",
+              "value": "eventName=='ConsoleLogin' && errorMessage=='Failed authentication' ? 'ConsoleSigninFailureActivity' : securityEventCategory"
+            },
+            {
+              "name": "securityEventCategory",
+              "value": "__errorCode.endsWith('UnauthorizedOperation') || __errorCode.startsWith('AccessDenied') ? 'AuthorizationFailureActivity' : securityEventCategory"
+            }
+          ],
+          "keep": [
+            "_raw*",
+            "_time",
+            "securityEventCategory",
+            "origin"
+          ],
+          "remove": [
+            "*"
+          ]
+        }
+      },
+      {
+        "filter": "true",
+        "id": "serde",
+        "description": "Reserialize to JSON object",
+        "disabled": false,
+        "conf": {
+          "mode": "reserialize",
+          "type": "json",
+          "srcField": "_raw",
+          "remove": [
+            "recipientAccountId",
+            "eventID",
+            "responseElements.credentials.sessionToken"
+          ]
+        }
+      }
+    ],
+    "description": "Pipeline to process AWS Cloudtrail logs events delivered via Lambda"
+  }
+}
