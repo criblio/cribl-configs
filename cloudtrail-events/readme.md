@@ -19,6 +19,6 @@ To apply confgurations please follow these steps
 
 
 References:
-* Cribl docs: docs.cribl.io
+* Cribl docs: https://docs.cribl.io
 * Join us in Slack #cribl: https://cribl.io/community
 * Tweet at us @cribl_io: https://twitter.com/cribl_io
